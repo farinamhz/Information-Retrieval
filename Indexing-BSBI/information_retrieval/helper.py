@@ -12,7 +12,7 @@ class IdMap:
     def _get_str(self, i):
         """Returns the string corresponding to a given id (`i`)."""
         ### Begin your code
-
+        return self.id_to_str[i]
         ### End your code
 
     def _get_id(self, s):
@@ -20,7 +20,12 @@ class IdMap:
         If `s` is not in the IdMap yet, then assigns a new id and returns the new id.
         """
         ### Begin your code
-
+        if s not in self.str_to_id.keys():
+            id_new = len(self)
+            self.id_to_str.append(s)
+            self.str_to_id[s] = id_new
+            return id_new
+        return self.str_to_id[s]
         ### End your code
 
     def __getitem__(self, key):
