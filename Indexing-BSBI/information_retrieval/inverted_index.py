@@ -108,7 +108,15 @@ class InvertedIndexWriter(InvertedIndex):
             List of docIDs where the term appears
         """
         ### Begin your code
-
+        encoded = self.postings_encoding.encode(postings_list)
+        start_position_in_index_file = self.index_file.tell()
+        number_of_postings_in_list = len(postings_list)
+        length_in_bytes_of_postings_list = len(encoded)
+        self.postings_dict[term] = (start_position_in_index_file,
+                                    number_of_postings_in_list,
+                                    length_in_bytes_of_postings_list)
+        self.terms.append(term)
+        self.index_file.write(encoded)
         ### End your code
 
 
