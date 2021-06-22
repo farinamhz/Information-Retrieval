@@ -107,7 +107,7 @@ class BSBIIndex:
             Inverted index on disk corresponding to the block
         """
         ### Begin your code
-
+            #test
         ### End your code
 
     def merge(self, indices, merged_index):
