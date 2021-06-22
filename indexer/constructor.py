@@ -107,7 +107,17 @@ class BSBIIndex:
             Inverted index on disk corresponding to the block
         """
         ### Begin your code
-            #test
+        last_term = -1
+        postings_list = []
+        for pair in sorted(set(td_pairs)):
+            if pair[0] != last_term:
+                if last_term != -1:
+                    index.append(last_term, postings_list)
+                postings_list = []
+                last_term = pair[0]
+            postings_list.append(pair[1])
+        if last_term != -1:
+            index.append(last_term, postings_list)
         ### End your code
 
     def merge(self, indices, merged_index):
