@@ -1,6 +1,6 @@
 import pickle as pkl
 import os
-from .encoder import UncompressedPostings
+from indexer.encoder import UncompressedPostings
 class InvertedIndex:
     """A class that implements efficient reads and writes of an inverted index
     to disk

@@ -1,4 +1,4 @@
-from information_retrieval.constructor import BSBIIndex
+from indexer.constructor import BSBIIndex
 
 DATASET_PATH = ''
 OUTPUT_DIR = ''
