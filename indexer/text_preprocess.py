@@ -34,7 +34,7 @@ class TextCleaner:
                     tokens not in [';', ',', '&', '?', 'amp', 'nbsp', '.', 'o'] and \
                     not re.match(r'\d+', token):
                 clean_tokens.add(token)
-        return clean_tokens
+        return list(clean_tokens)
 
     @classmethod
     def token_convertor(cls, token):

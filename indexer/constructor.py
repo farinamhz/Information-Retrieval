@@ -1,9 +1,12 @@
 import contextlib
-from .inverted_index import InvertedIndexIterator, InvertedIndexWriter, InvertedIndexMapper
+from typing import *
 import pickle as pkl
 import os
+
+from .inverted_index import InvertedIndexIterator, InvertedIndexWriter, InvertedIndexMapper
 from .helper import IdMap
-from typing import *
+from .text_preprocess import TextCleaner
+
 
 class BSBIIndex:
     """
@@ -92,9 +95,34 @@ class BSBIIndex:
         Should use self.term_id_map and self.doc_id_map to get termIDs and docIDs.
         These persist across calls to parse_block
         """
-        ### Begin your code
+        td_pairs = list()
+        files = self.get_file_paths(path=self.data_dir + '/' + block_dir_relative)
+        text_cleaner = TextCleaner()
+        for file_path in files:
+            file = open(file_path, encoding='utf8')
+            text = file.read()
+            doc_id = self.doc_id_map[file_path]
+            tokens = text_cleaner.tokenize(text)
+            td_pairs.extend(list(map(lambda token: (doc_id, self.term_id_map[token]), tokens)))
+        return td_pairs
 
-        ### End your code
+    @staticmethod
+    def get_file_paths(path: str) -> list:
+        """
+        get the list of file's path
+        :param path: path of directory
+        :return: return a list of file's path
+        """
+        if not os.path.isdir(path):
+            raise Exception("the path is not the path of directory")
+
+        files = list()
+        entries = os.listdir(path)
+        for each in entries:
+            full_path = path + '/' + each
+            if not os.path.isdir(full_path):
+                files.append(files)
+        return files
 
     def invert_write(self, td_pairs, index):
         """Inverts td_pairs into postings_lists and writes them to the given index
