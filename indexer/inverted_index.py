@@ -1,6 +1,8 @@
 import pickle as pkl
 import os
 from indexer.encoder import UncompressedPostings
+
+
 class InvertedIndex:
     """A class that implements efficient reads and writes of an inverted index
     to disk
@@ -133,9 +135,7 @@ class InvertedIndexIterator(InvertedIndex):
     def _initialization_hook(self):
         """Use this function to initialize the iterator
         """
-        ### Begin your code
-
-        ### End your code
+        self.index = 0
 
     def __iter__(self):
         return self
@@ -147,9 +147,15 @@ class InvertedIndexIterator(InvertedIndex):
         index file. In particular, you should not try to maintain the full
         index file in memory.
         """
-        ### Begin your code
+        if self.index >= len(self.terms):
+            raise StopIteration
 
-        ### End your code
+        start_posting_pointer, posting_list_len,  bytes_num = self.postings_dict[self.terms[self.index]]
+        self.index_file.seek(start_posting_pointer, os.SEEK_SET)
+        encoded_posting_list = self.index_file.read()
+        decode_posting_list = self.postings_encoding.decode(encoded_posting_list)
+        self.index += 1
+        return self.terms[self.index - 1], decode_posting_list
 
     def delete_from_disk(self):
         """Marks the index for deletion upon exit. Useful for temporary indices
