@@ -95,7 +95,7 @@ class BSBIIndex:
         Should use self.term_id_map and self.doc_id_map to get termIDs and docIDs.
         These persist across calls to parse_block
         """
-        td_pairs = list()
+        td_pairs = set()
         files = self.get_file_paths(path=self.data_dir + '/' + block_dir_relative)
         text_cleaner = TextCleaner()
         for file_path in files:
@@ -103,8 +103,8 @@ class BSBIIndex:
             text = file.read()
             doc_id = self.doc_id_map[file_path]
             tokens = text_cleaner.tokenize(text)
-            td_pairs.extend(list(map(lambda token: (doc_id, self.term_id_map[token]), tokens)))
-        return td_pairs
+            td_pairs.update(list(map(lambda token: (doc_id, self.term_id_map[token]), tokens)))
+        return list(td_pairs)
 
     @staticmethod
     def get_file_paths(path: str) -> list:
@@ -121,7 +121,7 @@ class BSBIIndex:
         for each in entries:
             full_path = path + '/' + each
             if not os.path.isdir(full_path):
-                files.append(files)
+                files.append(full_path)
         return files
 
     def invert_write(self, td_pairs, index):
