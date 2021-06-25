@@ -2,6 +2,7 @@ import contextlib
 from typing import *
 import pickle as pkl
 import os
+from multiprocessing import Pool
 
 from .inverted_index import InvertedIndexIterator, InvertedIndexWriter, InvertedIndexMapper
 from .helper import IdMap
@@ -150,9 +151,28 @@ class BSBIIndex:
             An instance of InvertedIndexWriter object into which each merged
             postings list is written out one at a time
         """
-        ### Begin your code
+        def get_dict(index: InvertedIndexIterator) -> dict:
+            """
+            convert InvertedIndexIterator into dict of term_id and posting list
+            """
+            return dict(list([each for each in index]))
 
-        ### End your code
+        pool = Pool(int(len(indices)/2))
+        indices_dict = pool.starmap(get_dict, indices)
+        pool.close()
+        pool.terminate()
+
+        # merge the dicts
+        merged_dict = dict()
+        while indices_dict:
+            main_dict = indices_dict.pop(0)
+            for term_id in main_dict:
+                posting_list = main_dict[term_id]
+                for other_dict in indices_dict:
+                    posting_list.extend(other_dict.pop(term_id, []))
+                merged_dict.update({term_id: posting_list})
+
+        return list(merged_dict.items())
 
     def retrieve(self, query: AnyStr):
         """
