@@ -54,6 +54,33 @@ class BM25Scorer:
 
         ### End your code
         ...
+    def bm25f_normalize_doc_vec(self, q, d, doc_vec):
+        """ Normalize the raw term frequencies in fields in document d
+            using above equation (1).
+        Args:
+            q (Query) : the query
+            d (Document) : the document
+            doc_vec (dict) : the doc vector
+        Return:
+            doc_vec (dict) : the doc vector after normalization
+        """
+        ### Begin your code
+
+        ### End your code
+
+    def calc_avg_length(self):
+        """ Set up average lengths for BM25F, also handling PageRank.
+        You need to
+        Initialize any data structures needed.
+        Perform any preprocessing you would like to do on the fields.
+        Handle pagerank
+        Accumulate lengths of fields in documents.
+        Hint: You could use query_dict
+        """
+        ### Begin your code
+
+        ### End your code
+
 
 
 if __name__ == '__main__':
