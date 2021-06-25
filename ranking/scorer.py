@@ -37,7 +37,28 @@ class BM25Scorer:
                 freq[item] = 1
         return freq
 
+    def calc_avg_length(self):
+        """ Set up average lengths for BM25F, also handling PageRank.
+        You need to
+        Initialize any data structures needed.
+        Perform any preprocessing you would like to do on the fields.
+        Handle pagerank
+        Accumulate lengths of fields in documents.
+        Hint: You could use query_dict
+        """
 
+    def get_total_score(self, q, query_vec, d, doc_vec):
+
+        term = q.split()
+        f = dict()
+        for t in term:
+            if t in doc_vec:
+                f[t] += doc_vec[t]
+        score = sum([query_vec[t] * ((f[t] * (self.k1 + 1))
+                     / (f[t] + self.k1 *
+                     (1 - self.b + self.b * (len(d) / self.avg_length))))
+                     for t in term])
+        return score
     ### End your code
 
     def get_query_vector(self, q):
