@@ -162,17 +162,14 @@ class BSBIIndex:
         pool.close()
         pool.terminate()
 
-        # merge the dicts
-        merged_dict = dict()
+        # merge the dicts and write to merged_index
         while indices_dict:
             main_dict = indices_dict.pop(0)
             for term_id in main_dict:
                 posting_list = main_dict[term_id]
                 for other_dict in indices_dict:
                     posting_list.extend(other_dict.pop(term_id, []))
-                merged_dict.update({term_id: posting_list})
-
-        return list(merged_dict.items())
+                merged_index.append(term_id, posting_list)
 
     def retrieve(self, query: AnyStr):
         """
