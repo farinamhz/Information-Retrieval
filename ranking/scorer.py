@@ -122,7 +122,7 @@ class BM25Scorer:
 
 if __name__ == '__main__':
     idf = Idf()
-    scorer = BM25Scorer()
+    scorer = BM25Scorer(idf)
     d = "here is the document"
     q = "here is the query"
     score = scorer.get_sim_score(q, d)
