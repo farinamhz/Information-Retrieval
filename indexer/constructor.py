@@ -203,6 +203,11 @@ class BSBIIndex:
             self.load()
 
         ### Begin your code
+        query_words = query.split()
+        for q in query_words:
+            q_id = self.term_id_map[q]
+            InvertedIndexMapper(self.index_name, postings_encoding=
+                                     self.postings_encoding, directory=self.output_dir).__getitem__(q_id)
 
         ### End your code
 

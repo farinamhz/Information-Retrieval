@@ -186,5 +186,11 @@ class InvertedIndexMapper(InvertedIndex):
         corresponding to the postings list for the requested term.
         """
         ### Begin your code
-
+        start_posting_pointer, posting_list_len,  bytes_num = self.postings_dict[term]
+        self.index_file.seek(start_posting_pointer, os.SEEK_SET)
+        posting_list_mapper = self.index_file.read(bytes_num)
+        return posting_list_mapper
         ### End your code
+
+
+
