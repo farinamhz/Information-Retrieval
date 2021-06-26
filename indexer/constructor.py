@@ -44,11 +44,13 @@ class BSBIIndex:
 
     def load(self):
         """Loads doc_id_map and term_id_map from output directory"""
-
-        with open(os.path.join(self.output_dir, 'terms.dict'), 'rb') as f:
-            self.term_id_map = pkl.load(f)
-        with open(os.path.join(self.output_dir, 'docs.dict'), 'rb') as f:
-            self.doc_id_map = pkl.load(f)
+        try:
+            with open(os.path.join(self.output_dir, 'terms.dict'), 'rb') as f:
+                self.term_id_map = pkl.load(f)
+            with open(os.path.join(self.output_dir, 'docs.dict'), 'rb') as f:
+                self.doc_id_map = pkl.load(f)
+        except FileNotFoundError:
+            self.index()
 
     def index(self):
         """Base indexing code
@@ -104,7 +106,7 @@ class BSBIIndex:
             text = file.read()
             doc_id = self.doc_id_map[file_path]
             tokens = text_cleaner.tokenize(text)
-            td_pairs.update(list(map(lambda token: (doc_id, self.term_id_map[token]), tokens)))
+            td_pairs.update(list(map(lambda token: (self.term_id_map[token], doc_id), tokens)))
         return list(td_pairs)
 
     @staticmethod
@@ -135,7 +137,6 @@ class BSBIIndex:
         index: InvertedIndexWriter
             Inverted index on disk corresponding to the block
         """
-        ### Begin your code
         last_term = -1
         postings_list = []
         for pair in sorted(set(td_pairs)):
@@ -147,7 +148,7 @@ class BSBIIndex:
             postings_list.append(pair[1])
         if last_term != -1:
             index.append(last_term, postings_list)
-        ### End your code
+        # print(index.postings_dict)
 
     def merge(self, indices, merged_index):
         """Merges multiple inverted indices into a single index
@@ -161,16 +162,11 @@ class BSBIIndex:
             An instance of InvertedIndexWriter object into which each merged
             postings list is written out one at a time
         """
-        def get_dict(index: InvertedIndexIterator) -> dict:
-            """
-            convert InvertedIndexIterator into dict of term_id and posting list
-            """
-            return dict(list([each for each in index]))
 
-        pool = Pool(int(len(indices)/2))
-        indices_dict = pool.starmap(get_dict, indices)
-        pool.close()
-        pool.terminate()
+        indices_dict = list()
+        for index in indices:
+            # convert InvertedIndexIterator into dict of term_id and posting list
+            indices_dict.append(dict(list([each for each in index])))
 
         # merge the dicts and write to merged_index
         while indices_dict:
@@ -202,14 +198,22 @@ class BSBIIndex:
         if len(self.term_id_map) == 0 or len(self.doc_id_map) == 0:
             self.load()
 
-        ### Begin your code
-        query_words = query.split()
-        for q in query_words:
-            q_id = self.term_id_map[q]
-            InvertedIndexMapper(self.index_name, postings_encoding=
-                                     self.postings_encoding, directory=self.output_dir).__getitem__(q_id)
+        # query_words = query.split()
+        text_cleaner = TextCleaner()
+        query_words = text_cleaner.tokenize(query)
+        posting_lists = list()
+        with InvertedIndexMapper(self.index_name, postings_encoding=self.postings_encoding,
+                                 directory=self.output_dir) as index_mapper:
+            for q in query_words:
+                q_id = self.term_id_map[q]
+                posting_lists.append(set(index_mapper[q_id]))
 
-        ### End your code
+        # get common docs
+        common_posting_list = posting_lists[0]
+        for posting_list in posting_lists[1:]:
+            common_posting_list.intersection_update(posting_list)
+
+        return [self.doc_id_map[doc_id] for doc_id in common_posting_list]
 
 
 def sorted_intersect(list1: List[Any], list2: List[Any]):
