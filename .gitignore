@@ -129,5 +129,5 @@ dmypy.json
 .pyre/
 .idea/
 .vscode/
-.Output/
-!.Output/empty_file
+Output/*
+!Output/empty_file
