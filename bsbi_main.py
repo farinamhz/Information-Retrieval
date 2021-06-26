@@ -9,5 +9,7 @@ if __name__ == '__main__':
     # BSBI_instance.index()
     query = input('search >>  ')
     result = BSBI_instance.retrieve(query)
-    print(result)
-    print(len(result))
+    print(f'Number of retrieve docs: {len(result)}')
+    print('Directory of retrieve docs: ')
+    for each in result:
+        print(each)
