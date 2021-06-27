@@ -86,6 +86,8 @@ class BM25Scorer:
             if qw in frequency_of_doc_dic:
                 if qw not in doc_vec:
                     doc_vec[qw] = frequency_of_doc_dic[qw]
+            else:
+                doc_vec[qw] = 0
 
 
         ### End your code
@@ -95,7 +97,12 @@ class BM25Scorer:
 
     def normalize_doc_vec(self, q, d, doc_vec):
         ### Begin your code
-
+        x = 0
+        for item in doc_vec:
+            x += (doc_vec[item] * doc_vec[item])
+        for item in doc_vec:
+            doc_vec[item] = doc_vec[item] / math.sqrt(x)
+        return doc_vec
         ### End your code
         ...
     def bm25f_normalize_doc_vec(self, q, d, doc_vec):
