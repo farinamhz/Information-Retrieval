@@ -79,6 +79,14 @@ class BM25Scorer:
         doc_vec = {}
 
         ### Begin your code
+        doc_wordlist = d.split()
+        query_wordlist = q.split()
+        frequency_of_doc_dic = self.countfrequency(doc_wordlist)
+        for qw in query_wordlist:
+            if qw in frequency_of_doc_dic:
+                if qw not in doc_vec:
+                    doc_vec[qw] = frequency_of_doc_dic[qw]
+
 
         ### End your code
 
