@@ -1,0 +1,5 @@
+hazm==0.7.0
+nltk==3.4.5
+numpy==1.21.0
+parsivar==0.2.3
+six==1.16.0
