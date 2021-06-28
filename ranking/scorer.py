@@ -1,4 +1,5 @@
 from ranking.idf import Idf
+from indexer_plus.constructor import BSBIIndex
 
 
 class BM25Scorer:
@@ -7,8 +8,9 @@ class BM25Scorer:
         Needs to be extended by each specific implementation of scorers.
     """
 
-    def __init__(self, idf, query_weight_scheme=None, doc_weight_scheme=None):  # Modified
+    def __init__(self, idf, index, query_weight_scheme=None, doc_weight_scheme=None):  # Modified
         self.idf = idf
+        self.index = index
 
         self.default_query_weight_scheme = {"tf": 'b', "df": 't', "norm": None}  # boolean, idf, none
         self.default_doc_weight_scheme = {"tf": 'n', "df": 'n', "norm": None}  # natural, none
@@ -85,7 +87,9 @@ class BM25Scorer:
 
 if __name__ == '__main__':
     idf = Idf()
-    scorer = BM25Scorer()
+    index = BSBIIndex(data_dir='./Dataset_IR/Train', output_dir='./Output/')
+    index.load()
+    scorer = BM25Scorer(idf, index)
     d = "here is the document"
     q = "here is the query"
     score = scorer.get_sim_score(q, d)
