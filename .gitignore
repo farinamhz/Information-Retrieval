@@ -131,3 +131,6 @@ dmypy.json
 .vscode/
 Output/*
 !Output/empty_file
+!Output/Doc
+Output/Doc/*
+!Output/Doc/empty_file
