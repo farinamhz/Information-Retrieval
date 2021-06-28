@@ -84,11 +84,10 @@ class BM25Scorer:
         ### End your code
 
 
-
 if __name__ == '__main__':
-    idf = Idf()
     index = BSBIIndex(data_dir='./Dataset_IR/Train', output_dir='./Output/')
     index.load()
+    idf = Idf(index)
     scorer = BM25Scorer(idf, index)
     d = "here is the document"
     q = "here is the query"
