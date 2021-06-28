@@ -1,5 +1,7 @@
 from ranking.idf import Idf
 from indexer_plus.constructor import BSBIIndex
+from indexer_plus.text_preprocess import TextCleaner
+from indexer_plus.utils import DocInfo
 
 
 class BM25Scorer:
@@ -11,6 +13,9 @@ class BM25Scorer:
     def __init__(self, idf, index, query_weight_scheme=None, doc_weight_scheme=None):  # Modified
         self.idf = idf
         self.index = index
+
+        self.text_cleaner = TextCleaner()
+        self.doc_info = DocInfo(index.term_id_map)
 
         self.default_query_weight_scheme = {"tf": 'b', "df": 't', "norm": None}  # boolean, idf, none
         self.default_doc_weight_scheme = {"tf": 'n', "df": 'n', "norm": None}  # natural, none
@@ -42,6 +47,9 @@ class BM25Scorer:
         return query_vec
 
     def get_doc_vector(self, q, d, doc_weight_scheme=None):
+        # d = doc_id
+        # path
+
         doc_vec = {}
 
         ### Begin your code

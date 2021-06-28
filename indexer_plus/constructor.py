@@ -180,15 +180,14 @@ class BSBIIndex:
                     posting_list.extend(other_dict.pop(term_id, []))
                 merged_index.append(term_id, posting_list)
 
-    def retrieve(self, query: AnyStr):
+    def retrieve(self, query: dict):
         """
         use InvertedIndexMapper here!
         Retrieves the documents corresponding to the conjunctive query
 
         Parameters
         ----------
-        query: str
-            Space separated list of query tokens
+        query: dict of terms and tf
 
         Result
         ------
@@ -201,13 +200,10 @@ class BSBIIndex:
         if len(self.term_id_map) == 0 or len(self.doc_id_map) == 0:
             self.load()
 
-        # query_words = query.split()
-        text_cleaner = TextCleaner()
-        query_words = text_cleaner.tokenize(query).keys()
         posting_lists = list()
         with InvertedIndexMapper(self.index_name, postings_encoding=self.postings_encoding,
                                  directory=self.output_dir) as index_mapper:
-            for q in query_words:
+            for q in query.keys():
                 q_id = self.term_id_map[q]
                 posting_lists.append(set(index_mapper[q_id]))
 
@@ -216,7 +212,7 @@ class BSBIIndex:
         for posting_list in posting_lists[1:]:
             common_posting_list.intersection_update(posting_list)
 
-        return [self.doc_id_map[doc_id] for doc_id in common_posting_list]
+        return list(common_posting_list)
 
 
 def sorted_intersect(list1: List[Any], list2: List[Any]):
