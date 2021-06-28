@@ -1,6 +1,7 @@
 import hazm
 import parsivar
 import re
+import collections
 
 
 def get_characters():
@@ -23,9 +24,15 @@ class TextCleaner:
     lemmatizer = hazm.Lemmatizer()
     stop_words = get_stop_words()
 
+    @staticmethod
+    def get_text_info(text):
+        return {
+            'length': len(text)
+        }
+
     @classmethod
     def tokenize(cls, text):
-        clean_tokens = set()
+        clean_tokens = list()
         text = cls.delete_specific_char(cls.normalize(text))
         tokens = cls.tokenizer.tokenize_words(text)
         for token in tokens:
@@ -33,8 +40,8 @@ class TextCleaner:
             if token not in cls.stop_words and \
                     tokens not in [';', ',', '&', '?', 'amp', 'nbsp', '.', 'o'] and \
                     not re.match(r'\d+', token):
-                clean_tokens.add(token)
-        return list(clean_tokens)
+                clean_tokens.append(token)
+        return dict(collections.Counter(clean_tokens))
 
     @classmethod
     def token_convertor(cls, token):
