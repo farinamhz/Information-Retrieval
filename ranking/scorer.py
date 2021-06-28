@@ -14,7 +14,7 @@ class BM25Scorer:
         self.b = 0.75
         self.k1 = 1.5
 
-        self.N = yechizi
+        self.N = yechizi #get from len of IdMap
 
         self.calc_avg_length()
 
@@ -29,6 +29,7 @@ class BM25Scorer:
 
     ### Begin your code
     def countfrequency(self, my_list):
+        #delete when they add tokenzier and tf calculator
         freq = {}
         for item in my_list:
             if item in freq:
@@ -38,14 +39,9 @@ class BM25Scorer:
         return freq
 
     def calc_avg_length(self):
-        """ Set up average lengths for BM25F, also handling PageRank.
-        You need to
-        Initialize any data structures needed.
-        Perform any preprocessing you would like to do on the fields.
-        Handle pagerank
-        Accumulate lengths of fields in documents.
-        Hint: You could use query_dict
-        """
+        # get from json files and calculate the avg
+        pass
+
 
     def get_total_score(self, q, query_vec, d, doc_vec):
 
@@ -64,14 +60,17 @@ class BM25Scorer:
     def get_query_vector(self, q):
         query_vec = {}
         ### Begin your code
-        wordlist = q.split()
-        query_dic = self.countfrequency(wordlist)
+
+        #delete when they add tokenzier and tf calculator
+        # wordlist = q.split()
+        # query_dic = self.countfrequency(wordlist)
 
         for term, tf in query_dic.items():
             # print(tf)
             # print(term)
             term_idf = self.idf.get_idf(term)
-            query_vec[term] = math.log(((self.N - term_idf + 0.5) / (term_idf + 0.5)) + 1)
+            # query_vec[term] = math.log(((self.N - term_idf + 0.5) / (term_idf + 0.5)) + 1)
+            query_vec[term] = term_idf
         ### End your code
         return query_vec
 
@@ -130,8 +129,7 @@ class BM25Scorer:
             *** score ***
         """
         query_vec = self.get_query_vector(q)
-        self.doc_weight_scheme['norm'] = self.bm25f_normalize_doc_vec
-        norm_doc_vec = self.get_doc_vector(q, d, self.doc_weight_scheme)
+        norm_doc_vec = self.get_doc_vector(q, d)
         return self.get_total_score(q, query_vec, d, norm_doc_vec)
 
 
