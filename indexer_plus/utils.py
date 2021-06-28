@@ -22,10 +22,15 @@ class DocInfo:
         with open(self.save_path + str(doc_id), 'w') as f:
             f.write(str(doc_info))
 
-    def load(self, doc_id: int) -> dict:
+    def _load(self, doc_id: int) -> dict:
         try:
             f = open(self.save_path + str(doc_id), 'r')
             data = ast.literal_eval(f.read())
             return data
         except FileNotFoundError:
             return {}
+
+    def __getitem__(self, key):
+        if not isinstance(key, int):
+            return {}
+        return self._load(key)
