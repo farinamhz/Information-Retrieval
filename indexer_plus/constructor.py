@@ -7,6 +7,7 @@ from multiprocessing import Pool
 from .inverted_index import InvertedIndexIterator, InvertedIndexWriter, InvertedIndexMapper
 from .helper import IdMap
 from .text_preprocess import TextCleaner
+from .utils import DocInfo
 
 
 class BSBIIndex:
@@ -99,6 +100,7 @@ class BSBIIndex:
         These persist across calls to parse_block
         """
         td_pairs = set()
+        doc_saver = DocInfo(term_id_map=self.term_id_map)
         files = self.get_file_paths(path=self.data_dir + '/' + block_dir_relative)
         text_cleaner = TextCleaner()
         for file_path in files:
@@ -106,7 +108,8 @@ class BSBIIndex:
             text = file.read()
             doc_id = self.doc_id_map[file_path]
             tokens = text_cleaner.tokenize(text)
-            td_pairs.update(list(map(lambda token: (self.term_id_map[token], doc_id), tokens)))
+            doc_saver.save(text_cleaner.get_text_info(text), tokens, doc_id)
+            td_pairs.update(list(map(lambda token: (self.term_id_map[token], doc_id), tokens.keys())))
         return list(td_pairs)
 
     @staticmethod
@@ -200,7 +203,7 @@ class BSBIIndex:
 
         # query_words = query.split()
         text_cleaner = TextCleaner()
-        query_words = text_cleaner.tokenize(query)
+        query_words = text_cleaner.tokenize(query).keys()
         posting_lists = list()
         with InvertedIndexMapper(self.index_name, postings_encoding=self.postings_encoding,
                                  directory=self.output_dir) as index_mapper:
