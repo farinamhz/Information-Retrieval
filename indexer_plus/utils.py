@@ -1,4 +1,5 @@
 import json
+import ast
 
 
 class DocInfo:
@@ -18,13 +19,13 @@ class DocInfo:
         converted_terms = self._convert_keys_to_id(terms)
         doc_info.update({'terms': converted_terms})
 
-        with open(self.save_path + str(doc_id) + '.json', 'w') as f:
-            json.dump(doc_info, f)
+        with open(self.save_path + str(doc_id), 'w') as f:
+            f.write(str(doc_info))
 
     def load(self, doc_id: int) -> dict:
         try:
-            f = open(self.save_path + str(doc_id) + '.json', 'r')
-            data = json.loads(f.read())
+            f = open(self.save_path + str(doc_id), 'r')
+            data = ast.literal_eval(f.read())
             return data
         except FileNotFoundError:
             return {}
