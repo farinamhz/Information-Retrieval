@@ -1,3 +1,5 @@
+import math
+
 from ranking.idf import Idf
 from indexer_plus.constructor import BSBIIndex
 from indexer_plus.text_preprocess import TextCleaner
@@ -80,17 +82,16 @@ class BM25Scorer:
 
     def get_doc_vector(self, q, d, doc_weight_scheme=None):
         doc_vec = {}
-
         ### Begin your code
-        doc_wordlist = d.split()
-        query_wordlist = q.split()
-        frequency_of_doc_dic = self.countfrequency(doc_wordlist)
-        for qw in query_wordlist:
-            if qw in frequency_of_doc_dic:
-                if qw not in doc_vec:
-                    doc_vec[qw] = frequency_of_doc_dic[qw]
+        query_vec = self.get_query_vector(q)
+        doc_dict_info = self.doc_info[d]['terms']
+
+        for qv in query_vec:
+            if qv in doc_dict_info:
+                if qv not in doc_vec:
+                    doc_vec[qv] = (doc_dict_info[qv]+1) * self.idf.get_idf(qv)
             else:
-                doc_vec[qw] = 0
+                doc_vec[qv] = 0
 
         ### End your code
 
@@ -106,7 +107,6 @@ class BM25Scorer:
             doc_vec[item] = doc_vec[item] / math.sqrt(x)
         return doc_vec
         ### End your code
-        ...
 
     def bm25f_normalize_doc_vec(self, q, d, doc_vec):
         """ Normalize the raw term frequencies in fields in document d
