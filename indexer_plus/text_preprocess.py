@@ -5,14 +5,14 @@ import collections
 
 
 def get_characters():
-    f = open('./indexer/resource/chars', encoding='utf-8')
+    f = open('./indexer_plus/resource/chars', encoding='utf-8')
     chars = f.read()
     return set([w for w in chars.split('\n') if w])
 
 
 def get_stop_words():
     nmz = parsivar.Normalizer()
-    f = open('./indexer/resource/persian', encoding='utf-8')
+    f = open('./indexer_plus/resource/persian', encoding='utf-8')
     words = f.read()
     return set([nmz.normalize(w) for w in words.split('\n') if w])
 
