@@ -31,7 +31,7 @@ class TextCleaner:
         for token in tokens:
             token = cls.token_convertor(token)
             if token not in cls.stop_words and \
-                    tokens not in [';', ',', '&', '?', 'amp', 'nbsp', '.', 'o'] and \
+                    token not in [';', ',', '&', '?', 'amp', 'nbsp', '.', 'o'] and \
                     not re.match(r'\d+', token):
                 clean_tokens.add(token)
         return list(clean_tokens)
