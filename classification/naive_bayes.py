@@ -2,7 +2,7 @@ from sklearn.naive_bayes import MultinomialNB
 from elasticsearch import Elasticsearch
 
 import utils
-from elastic import ElasticLoader
+from elastic2 import ElasticHandler
 
 
 if __name__ == '__main__':
@@ -19,8 +19,17 @@ if __name__ == '__main__':
 
     test_df['category'] = predicted
     merged_df = train_df.append(test_df)
-    print(utils.to_dict_convertor(merged_df))
-    # elastic = ElasticLoader(ElasticSearch())
+    print(':)')
+    el = Elasticsearch()
+    # print(el.indices.create(index='my-index', ignore=400))
+    doc_list = utils.to_dict_convertor(merged_df)
+    elastic = ElasticHandler('test')
+    elastic.index_documents(doc_list)
+    result = elastic.search(input('search: '))
+    for each in result:
+        print(each)
+    elastic.delete_all_docs()
+
 
 
 
