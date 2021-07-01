@@ -44,25 +44,6 @@ class ElasticHandler:
                 "query": category,
                 "fields": ['category', ]}}
 
-
-        # converted_or_query = self.get_or_query(query)
-        # should = [
-        #     {
-        #         "query_string": {
-        #             "query": converted_and_query,
-        #             "fields": ['text', ]}
-        #     }
-        # ]
-        # if with_category:
-        #     should.append({"query_string": {
-        #         "query": converted_or_query,
-        #         "fields": ['category', ]}})
-        #
-        # query_body = {"query": {
-        #     "bool": {
-        #         "should": should
-        #     }}}
-
         query_body = {"query": {
             "bool": bool_query}}
         return self.els.search(index=self.index_name, body=query_body, request_timeout=30)['hits']['hits']
