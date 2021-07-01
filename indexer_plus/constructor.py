@@ -151,7 +151,6 @@ class BSBIIndex:
             postings_list.append(pair[1])
         if last_term != -1:
             index.append(last_term, postings_list)
-        # print(index.postings_dict)
 
     def merge(self, indices, merged_index):
         """Merges multiple inverted indices into a single index
@@ -175,9 +174,9 @@ class BSBIIndex:
         while indices_dict:
             main_dict = indices_dict.pop(0)
             for term_id in main_dict:
-                posting_list = main_dict[term_id]
+                posting_list = set(main_dict[term_id])
                 for other_dict in indices_dict:
-                    posting_list.extend(other_dict.pop(term_id, []))
+                    posting_list.update(set(other_dict.pop(term_id, [])))
                 merged_index.append(term_id, posting_list)
 
     def retrieve(self, query: dict):

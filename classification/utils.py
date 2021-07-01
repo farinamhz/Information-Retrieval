@@ -64,4 +64,9 @@ def to_dict_convertor(df):
     return item_list
 
 
+def convert_query_to_tf_matrix(query: str, merged_df):
+    query = TextCleaner().get_clean_text(query)
+    return get_tf_matrix(pd.DataFrame({'text': [query, ]}), merged_df)
+
+
 

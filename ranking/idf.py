@@ -38,5 +38,5 @@ class Idf:
         if not isinstance(term, int):
             term = self.termsID[term]
         start_posting_pointer, posting_list_len, bytes_num = self.postings_dict[term]
-        return np.log(((self.total_doc_num - posting_list_len + 0.05) / (posting_list_len + 0.05)) + 1)
+        return np.log(((self.total_doc_num - posting_list_len + 0.5) / (posting_list_len + 0.5)) + 1)
 

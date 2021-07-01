@@ -2,6 +2,8 @@ from sklearn.naive_bayes import MultinomialNB
 from elasticsearch import Elasticsearch
 
 import utils
+import pandas as pd
+from text_preprocess import TextCleaner
 from elastic2 import ElasticHandler
 
 
@@ -19,16 +21,20 @@ if __name__ == '__main__':
 
     test_df['category'] = predicted
     merged_df = train_df.append(test_df)
-    print(':)')
+
+    query = input('search: ')
+    query_matrix = utils.convert_query_to_tf_matrix(query, merged_df)
+    predicted_category = model.predict(query_matrix)[0]
+    print(predicted_category)
     el = Elasticsearch()
     # print(el.indices.create(index='my-index', ignore=400))
     doc_list = utils.to_dict_convertor(merged_df)
     elastic = ElasticHandler('test')
     elastic.index_documents(doc_list)
-    result = elastic.search(input('search: '))
+    result = elastic.search(query, predicted_category)
     for each in result:
         print(each)
-    elastic.delete_all_docs()
+    # elastic.delete_all_docs()
 
 
 

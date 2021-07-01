@@ -152,7 +152,7 @@ class InvertedIndexIterator(InvertedIndex):
 
         start_posting_pointer, posting_list_len,  bytes_num = self.postings_dict[self.terms[self.index]]
         self.index_file.seek(start_posting_pointer, os.SEEK_SET)
-        encoded_posting_list = self.index_file.read()
+        encoded_posting_list = self.index_file.read(bytes_num)
         decode_posting_list = self.postings_encoding.decode(encoded_posting_list)
         self.index += 1
         return self.terms[self.index - 1], decode_posting_list

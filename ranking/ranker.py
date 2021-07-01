@@ -29,6 +29,7 @@ class Ranker:
 
     def get_sorted_result(self, doc_score):
         sorted_list = sorted(doc_score, key=lambda item: item[1], reverse=True)
+        print(sorted_list)
         return [self.index.doc_id_map[doc[0]] for doc in sorted_list]
 
 

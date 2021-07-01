@@ -33,17 +33,6 @@ class BM25Scorer:
         self.doc_weight_scheme = doc_weight_scheme if doc_weight_scheme is not None \
             else self.default_doc_weight_scheme  # Modified (added)
 
-    ### Begin your code
-    # def countfrequency(self, my_list):
-    #     # delete when they add tokenzier and tf calculator
-    #     freq = {}
-    #     for item in my_list:
-    #         if item in freq:
-    #             freq[item] += 1
-    #         else:
-    #             freq[item] = 1
-    #     return freq
-
     def calc_avg_length(self):
         # get from json files and calculate the avg
         len_sum = 0
@@ -57,6 +46,7 @@ class BM25Scorer:
         f = dict()
         for t in query_vec:
             if t in doc_vec:
+                # f[t] += doc_vec[t]
                 f[t] = f.get(t, 0) + doc_vec[t]
         score = sum([query_vec[t] * ((f[t] * (self.k1 + 1))
                                      / (f[t] + self.k1 *
@@ -86,7 +76,7 @@ class BM25Scorer:
         for qv in query_vec:
             if qv in doc_dict_info:
                 if qv not in doc_vec:
-                    doc_vec[qv] = (doc_dict_info[qv]+1) * self.idf.get_idf(qv)
+                    doc_vec[qv] = (doc_dict_info[qv] + 1) * self.idf.get_idf(qv)
             else:
                 doc_vec[qv] = 1
 
@@ -102,19 +92,6 @@ class BM25Scorer:
             doc_vec[item] = doc_vec[item] / math.sqrt(x)
         return doc_vec
 
-    def bm25f_normalize_doc_vec(self, q, d, doc_vec):
-        """ Normalize the raw term frequencies in fields in document d
-            using above equation (1).
-        Args:
-            q (Query) : the query
-            d (Document) : the document
-            doc_vec (dict) : the doc vector
-        Return:
-            doc_vec (dict) : the doc vector after normalization
-        """
-        ### Begin your code
-
-        ### End your code
 
     def get_sim_score(self, q, d):
         """ Score each document for each query.

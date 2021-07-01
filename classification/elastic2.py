@@ -28,34 +28,44 @@ class ElasticHandler:
             for i, each in enumerate(doc_list, 1)
         ]
 
-    def get_query(self, query=None):
+    def get_query(self):
+        return self.els.search(index=self.index_name, body={'query': {'match_all': {}}})
 
-        return self.els.search(index=self.index_name,body={'query': {'match_all': {}}})
-
-    def search(self, query, with_category=True):
-        fields = ['text', ]
-        if with_category:
-            fields.append('category')
+    def search(self, query, category, with_category=True):
         query = TextCleaner().get_clean_text(query)
         converted_and_query = self.get_and_query(query)
-        converted_or_query = self.get_or_query(query)
-        should = [
-            {
-                "query_string": {
-                    "query": converted_and_query,
-                    "fields": ['text', ]}
-            }
-        ]
-        if with_category:
-            should.append({"query_string": {
-                "query": converted_or_query,
-                "fields": ['category', ]}})
-        query_body = {"query": {
-            "bool": {
-                "should": should
-            }}}
+        bool_query = {'filter': {
+            "query_string": {
+                "query": converted_and_query,
+                "fields": ['text', ]}}}
 
-        return self.els.search(index=self.index_name, body=query_body)['hits']['hits']
+        if with_category:
+            bool_query['must'] = {"query_string": {
+                "query": category,
+                "fields": ['category', ]}}
+
+
+        # converted_or_query = self.get_or_query(query)
+        # should = [
+        #     {
+        #         "query_string": {
+        #             "query": converted_and_query,
+        #             "fields": ['text', ]}
+        #     }
+        # ]
+        # if with_category:
+        #     should.append({"query_string": {
+        #         "query": converted_or_query,
+        #         "fields": ['category', ]}})
+        #
+        # query_body = {"query": {
+        #     "bool": {
+        #         "should": should
+        #     }}}
+
+        query_body = {"query": {
+            "bool": bool_query}}
+        return self.els.search(index=self.index_name, body=query_body, request_timeout=30)['hits']['hits']
 
     @staticmethod
     def get_and_query(query):
